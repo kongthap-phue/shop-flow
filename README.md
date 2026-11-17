@@ -1,88 +1,179 @@
-# ShopFlow
+<p align="center">
+  <img src="docs/banner.png" alt="Shop Flow" width="100%">
+</p>
 
-ร้านค้าออนไลน์สำหรับโปรเจกต์วิชา IT332 ตอนนี้รันในเครื่องได้ครบทุกฟีเจอร์ โค้ดฝั่ง backend เขียนเป็นฟังก์ชันแบบ Lambda ไว้แล้ว เพื่อให้ย้ายขึ้น AWS ทีหลังได้โดยแก้น้อยที่สุด
+<p align="center">
+  <b>English</b> &nbsp;|&nbsp; <a href="README.th.md">ภาษาไทย</a>
+</p>
 
-## วิธีรัน
+<p align="center">
+  <img alt="React" src="https://img.shields.io/badge/React-18-134a40?logo=react&logoColor=white">
+  <img alt="Vite" src="https://img.shields.io/badge/Vite-6-134a40?logo=vite&logoColor=white">
+  <img alt="Tailwind CSS" src="https://img.shields.io/badge/Tailwind-v4-134a40?logo=tailwindcss&logoColor=white">
+  <img alt="Node.js" src="https://img.shields.io/badge/Node.js-20+-134a40?logo=nodedotjs&logoColor=white">
+  <img alt="AWS" src="https://img.shields.io/badge/AWS-Serverless-00806a?logo=amazonwebservices&logoColor=white">
+</p>
 
-ต้องมี Node.js 20 ขึ้นไป
+**Shop Flow** is an online general store selling clothes, IT gear, home goods and stationery. It is a project for IT332 Understanding Web Services at Bangkok University.
+
+## Screenshots
+
+<table>
+  <tr>
+    <td width="50%"><img src="docs/screenshots/home.jpg" alt="Home page"></td>
+    <td width="50%"><img src="docs/screenshots/shop.jpg" alt="All products"></td>
+  </tr>
+  <tr>
+    <td align="center">Home</td>
+    <td align="center">All products, with category filters and search</td>
+  </tr>
+  <tr>
+    <td><img src="docs/screenshots/product.jpg" alt="Product page"></td>
+    <td><img src="docs/screenshots/checkout.jpg" alt="Checkout"></td>
+  </tr>
+  <tr>
+    <td align="center">Product page</td>
+    <td align="center">Checkout</td>
+  </tr>
+  <tr>
+    <td><img src="docs/screenshots/admin-dashboard.jpg" alt="Admin overview"></td>
+    <td><img src="docs/screenshots/admin-products.jpg" alt="Product management"></td>
+  </tr>
+  <tr>
+    <td align="center">Admin: sales overview</td>
+    <td align="center">Admin: products and stock</td>
+  </tr>
+</table>
+
+The interface is in Thai.
+
+## Features
+
+**For customers**
+
+- Sign up and log in
+- Browse, search and filter products by category
+- Slide-out cart drawer plus a full cart page
+- Pay with test cards (no real charges)
+- Order history with delivery status
+
+**For admins (back office)**
+
+- Overview: 7-day revenue, a 14-day daily sales chart, orders waiting to ship and low-stock items
+- Add, edit and delete products, with image upload
+- Manage orders: move them from waiting to ship → shipping → delivered, or cancel and restock automatically
+- An inbox for notifications the system sends to admins
+
+**Background jobs**
+
+- Uploading a product image automatically creates a 600×750 WebP thumbnail
+- A new order deducts stock, notifies admins and warns when a product runs low
+- A daily report summarises sales from the last 24 hours
+
+## Getting started
+
+Requires [Node.js](https://nodejs.org) 20 or later.
 
 ```bash
-npm run setup   # ติดตั้งทุกอย่าง + ใส่สินค้าตัวอย่าง (รันครั้งแรกครั้งเดียว)
-npm run dev     # เปิด backend (port 4301) + หน้าเว็บ (port 4300)
+git clone https://github.com/kongthap-phue/shop-flow.git
+cd shop-flow
+npm run setup   # install everything and add sample products (first run only)
+npm run dev     # start the backend and the web app together
 ```
 
-เปิด http://localhost:4300
+Open http://localhost:4300
 
-ถ้าพอร์ตชนกับงานอื่น เปลี่ยนได้ด้วย `WEB_PORT=xxxx API_PORT=yyyy npm run dev`
+| Part | Port |
+|---|---|
+| Web app (Vite) | `4300` |
+| API (Express emulating API Gateway) | `4301` |
 
-### ให้เพื่อนเข้าดู
+If the ports clash with something else, run `WEB_PORT=xxxx API_PORT=yyyy npm run dev`.
 
-- อยู่ Wi-Fi เดียวกัน: ให้เพื่อนเปิด `http://<IP ของเครื่องเรา>:4300` (ดู IP ด้วย `ipconfig getifaddr en0`)
-- อยู่คนละที่: เปิด `npm run dev` ไว้ แล้วรัน `npm run share` (ใช้ ngrok) จะได้ลิงก์ https ส่งให้เพื่อนได้เลย
+### Demo accounts
 
-| บัญชีทดลอง | อีเมล | รหัสผ่าน |
+| Role | Email | Password |
 |---|---|---|
-| แอดมิน | `admin@shop.local` | `admin1234` |
-| ลูกค้า | `customer@shop.local` | `customer1234` |
+| Admin | `admin@shop.local` | `admin1234` |
+| Customer | `customer@shop.local` | `customer1234` |
 
-บัตรทดสอบตอนชำระเงิน (ไม่ตัดเงินจริง)
+The login page has buttons that fill in these accounts for you.
 
-- `4242 4242 4242 4242` จ่ายสำเร็จ
-- `4000 0000 0000 0002` บัตรถูกปฏิเสธ
-- วันหมดอายุกับ CVC ใส่อะไรก็ได้ให้ถูกรูปแบบ เช่น `12/28`, `123`
+### Test cards
 
-คำสั่งอื่น
+| Card number | Result |
+|---|---|
+| `4242 4242 4242 4242` | Payment succeeds |
+| `4000 0000 0000 0002` | Card declined |
 
-- `npm run seed` ล้างข้อมูลทั้งหมดแล้วใส่สินค้าตัวอย่างใหม่
-- `npm run report` รันรายงานยอดขายประจำวันด้วยมือ
+Any valid-looking expiry date and CVC work, for example `12/28` and `123`.
 
-## ฟีเจอร์
+### Other commands
 
-**ลูกค้า:** สมัคร/ล็อกอิน · ดูและค้นหาสินค้า กรองตามหมวด · ตะกร้า · ชำระเงิน · ดูประวัติคำสั่งซื้อ
+| Command | What it does |
+|---|---|
+| `npm run seed` | Wipe all data and reload the sample products |
+| `npm run report` | Generate the daily sales report now |
+| `npm run share` | Open a public https link through ngrok (keep `npm run dev` running) |
 
-**แอดมิน (เมนู "หลังร้าน"):** เพิ่ม/แก้/ลบสินค้า · อัปโหลดรูป · ดูและเปลี่ยนสถานะคำสั่งซื้อ (ชำระแล้ว → กำลังจัดส่ง → จัดส่งสำเร็จ หรือยกเลิกแล้วคืนสต็อก) · ดูการแจ้งเตือน
+On the same Wi-Fi, others can open `http://<your IP>:4300`. On macOS, find your IP with `ipconfig getifaddr en0`.
 
-**งานอัตโนมัติ**
+## Architecture on AWS
 
-- อัปรูปสินค้า → ย่อเป็น thumbnail 480×480 ให้เอง
-- มีคำสั่งซื้อใหม่ → ตัดสต็อก + แจ้งแอดมิน พร้อมเตือนสินค้าใกล้หมด
-- รายงานยอดขาย 24 ชม. ล่าสุด + สินค้าใกล้หมด (กดสร้างได้ที่หลังร้าน → การแจ้งเตือน)
+<p align="center">
+  <img src="docs/architecture.png" alt="AWS architecture of Shop Flow" width="100%">
+</p>
 
-## โครงสร้าง
+When running locally, `backend/local/server.js` stands in for every AWS service.
+
+| Local | On AWS |
+|---|---|
+| Express turns requests into events | API Gateway |
+| Mock login in `auth-local.js` | Cognito |
+| JSON files in `backend/data` | DynamoDB |
+| `backend/uploads` folder | S3 + CloudFront |
+| Calls `onOrderCreated` after an order is created | DynamoDB Stream |
+| Notifications written to a file | SNS |
+| "Generate report" button in the back office | EventBridge (scheduled) |
+| Mock card charge | Stripe / Omise test mode |
+
+The files in `handlers/` and `events/` barely change. What gets rewritten is `lib/` and the web app's login (`frontend/src/auth.jsx`), which moves to Cognito.
+
+## Project structure
 
 ```
-backend/
-  src/                    ← โค้ดที่จะขึ้น AWS
-    handlers/             API: products, orders, uploads   (→ Lambda หลัง API Gateway)
-    events/               onImageUploaded                  (→ Lambda จาก S3 trigger)
-                          onOrderCreated                   (→ Lambda จาก DynamoDB Stream)
-                          dailyReport                      (→ Lambda จาก EventBridge)
-    lib/
-      db.js               เก็บข้อมูลเป็นไฟล์ JSON          (→ เปลี่ยนเป็น DynamoDB)
-      storage.js          เก็บรูปในโฟลเดอร์ uploads/       (→ เปลี่ยนเป็น S3 + CloudFront)
-      notify.js           แจ้งเตือนลงไฟล์                 (→ เปลี่ยนเป็น SNS)
-      payment.js          จำลองการตัดบัตร                  (→ เปลี่ยนเป็น Stripe/Omise test mode)
-      auth.js             อ่านข้อมูลผู้ใช้จาก Cognito claims (ใช้ได้เลย ไม่ต้องแก้)
-  local/                  ← ใช้แค่ตอนรันในเครื่อง ไม่ต้องขึ้น AWS
-    server.js             จำลอง API Gateway, S3, DynamoDB Stream
-    auth-local.js         ล็อกอินจำลอง                     (→ Cognito แทน)
-    seed.js               ข้อมูลตัวอย่าง
-frontend/                 React + Vite + Tailwind          (→ Amplify Hosting)
+shop-flow/
+├── backend/
+│   ├── src/                  code that goes to AWS
+│   │   ├── handlers/         API: products, orders, uploads
+│   │   ├── events/           onImageUploaded, onOrderCreated, dailyReport
+│   │   └── lib/              db, storage, notify, payment, auth
+│   └── local/                local development only
+│       ├── server.js         emulates API Gateway, S3, DynamoDB Stream
+│       ├── auth-local.js     mock login
+│       └── seed.js           sample data
+├── frontend/                 React + Vite + Tailwind
+│   └── src/
+│       ├── pages/            storefront, plus pages/admin for the back office
+│       └── components/
+└── docs/                     images used in the README
 ```
-
-ตอนย้ายขึ้น AWS ไฟล์ใน `handlers/` กับ `events/` แทบไม่ต้องแก้ ที่ต้องเขียนใหม่คือไฟล์ใน `lib/` ที่มีลูกศรบอกไว้ และเปลี่ยนการล็อกอินฝั่งหน้าเว็บ (`frontend/src/auth.jsx`) ไปใช้ Cognito
 
 ## API
 
-| Method | Path | ใครเรียก |
+| Method | Path | Access |
 |---|---|---|
-| GET | `/products` | ทุกคน |
-| GET | `/products/{id}` | ทุกคน |
-| POST | `/products` | แอดมิน |
-| PUT | `/products/{id}` | แอดมิน |
-| DELETE | `/products/{id}` | แอดมิน |
-| POST | `/uploads` | แอดมิน |
-| POST | `/orders` | ลูกค้า |
-| GET | `/orders/me` | ลูกค้า |
-| GET | `/orders` | แอดมิน |
-| PATCH | `/orders/{id}` | แอดมิน |
+| `GET` | `/products` | Everyone |
+| `GET` | `/products/{id}` | Everyone |
+| `POST` | `/products` | Admin |
+| `PUT` | `/products/{id}` | Admin |
+| `DELETE` | `/products/{id}` | Admin |
+| `POST` | `/uploads` | Admin |
+| `POST` | `/orders` | Customer |
+| `GET` | `/orders/me` | Customer |
+| `GET` | `/orders` | Admin |
+| `PATCH` | `/orders/{id}` | Admin |
+
+## Credits
+
+All product photos come from [Unsplash](https://unsplash.com). Photographers are listed in [CREDITS.md](CREDITS.md). The architecture diagram uses the official [AWS Architecture Icons](https://aws.amazon.com/architecture/icons/).

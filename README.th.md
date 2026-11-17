@@ -120,7 +120,7 @@ npm run dev     # เปิด backend และหน้าเว็บพร�
 
 ร้านเปิดใช้งานจริงบน AWS แล้วที่ **https://main.d2yz42dazxw1qn.amplifyapp.com**
 
-คู่มือติดตั้งทีละขั้นพร้อมภาพหน้าจอทุกบริการอยู่ที่ **[docs/AWS-DEPLOYMENT.md](docs/AWS-DEPLOYMENT.md)** (ภาษาอังกฤษ) เขียนจากการติดตั้งจริงบนบัญชี AWS Academy Learner Lab (`us-east-1`, `LabRole`) กลุ่มอื่นทำตามแล้วจะได้ผลลัพธ์เดียวกัน
+คู่มือติดตั้งทีละขั้นพร้อมภาพหน้าจอทุกบริการอยู่ที่ **[docs/AWS-DEPLOYMENT.th.md](docs/AWS-DEPLOYMENT.th.md)** (มีฉบับภาษาอังกฤษด้วย) เขียนจากการติดตั้งจริงบนบัญชี AWS Academy Learner Lab (`us-east-1`, `LabRole`) กลุ่มอื่นทำตามแล้วจะได้ผลลัพธ์เดียวกัน
 
 ไฟล์ที่ต้องอัปโหลดทั้ง 3 ไฟล์สร้างได้ด้วยสคริปต์ในโฟลเดอร์ `aws/`
 

@@ -1,5 +1,9 @@
 # Deploying Shop Flow to AWS
 
+<p align="center">
+  <b>English</b> &nbsp;|&nbsp; <a href="AWS-DEPLOYMENT.th.md">ภาษาไทย</a>
+</p>
+
 This guide walks through every step we used to put Shop Flow on AWS, with a screenshot for each important screen. Follow it from top to bottom and you will end up with the same working shop.
 
 **Live result:** https://main.d2yz42dazxw1qn.amplifyapp.com

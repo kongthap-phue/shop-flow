@@ -116,6 +116,20 @@ npm run dev     # เปิด backend และหน้าเว็บพร�
 
 ถ้าอยู่ Wi-Fi เดียวกัน เข้าผ่าน `http://<IP ของเครื่อง>:4300` ได้เลย ดู IP บน macOS ด้วย `ipconfig getifaddr en0`
 
+## ติดตั้งบน AWS
+
+ร้านเปิดใช้งานจริงบน AWS แล้วที่ **https://main.d2yz42dazxw1qn.amplifyapp.com**
+
+คู่มือติดตั้งทีละขั้นพร้อมภาพหน้าจอทุกบริการอยู่ที่ **[docs/AWS-DEPLOYMENT.md](docs/AWS-DEPLOYMENT.md)** (ภาษาอังกฤษ) เขียนจากการติดตั้งจริงบนบัญชี AWS Academy Learner Lab (`us-east-1`, `LabRole`) กลุ่มอื่นทำตามแล้วจะได้ผลลัพธ์เดียวกัน
+
+ไฟล์ที่ต้องอัปโหลดทั้ง 3 ไฟล์สร้างได้ด้วยสคริปต์ในโฟลเดอร์ `aws/`
+
+```bash
+./aws/build-lambda.sh
+node aws/make-openapi.mjs us-east-1 <account-id> <user-pool-id> aws-build/shopflow-api.openapi.json
+./aws/build-web.sh <invoke-url> <user-pool-id> <app-client-id>
+```
+
 ## สถาปัตยกรรมบน AWS
 
 <p align="center">
@@ -129,13 +143,13 @@ npm run dev     # เปิด backend และหน้าเว็บพร�
 | Express แปลง request เป็น event | API Gateway |
 | ล็อกอินจำลอง `auth-local.js` | Cognito |
 | ไฟล์ JSON ใน `backend/data` | DynamoDB |
-| โฟลเดอร์ `backend/uploads` | S3 + CloudFront |
+| โฟลเดอร์ `backend/uploads` | S3 (บัญชีปกติใช้ CloudFront ส่วน Learner Lab ใช้ลิงก์ S3 แบบมีลายเซ็น) |
 | เรียก `onOrderCreated` หลังสร้างออร์เดอร์ | DynamoDB Stream |
 | บันทึกแจ้งเตือนลงไฟล์ | SNS |
 | ปุ่มสร้างรายงานในหลังร้าน | EventBridge (ตั้งเวลา) |
 | จำลองการตัดบัตร | Stripe / Omise test mode |
 
-ไฟล์ใน `handlers/` และ `events/` แทบไม่ต้องแก้ ส่วนที่ต้องเขียนใหม่คือไฟล์ใน `lib/` และการล็อกอินฝั่งหน้าเว็บ (`frontend/src/auth.jsx`) ที่จะเปลี่ยนไปใช้ Cognito
+โค้ดชุดเดียวกันรันได้ทั้งในเครื่องและบน AWS ไฟล์ใน `backend/src/lib` จะเลือกใช้เวอร์ชัน AWS (`db-aws.js`, `storage-aws.js`, `notify-aws.js`) เองเมื่อมี environment variable ของ AWS ส่วนหน้าเว็บจะใช้ Cognito เมื่อ build พร้อม `VITE_COGNITO_CLIENT_ID`
 
 ## โครงสร้างโปรเจกต์
 
@@ -154,7 +168,8 @@ shop-flow/
 │   └── src/
 │       ├── pages/            หน้าร้าน และ pages/admin สำหรับหลังร้าน
 │       └── components/
-└── docs/                     รูปที่ใช้ใน README
+├── aws/                      สคริปต์ build และไฟล์นิยาม API สำหรับ AWS
+└── docs/                     คู่มือ AWS และรูปที่ใช้ใน README
 ```
 
 ## API

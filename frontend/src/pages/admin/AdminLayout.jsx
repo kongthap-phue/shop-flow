@@ -7,7 +7,7 @@ const NAV = [
   { to: '/admin', end: true, icon: 'home', label: 'ภาพรวม' },
   { to: '/admin/orders', icon: 'cart', label: 'คำสั่งซื้อ' },
   { to: '/admin/products', icon: 'box', label: 'สินค้า' },
-  { to: '/admin/notifications', icon: 'bell', label: 'การแจ้งเตือน' },
+  ...(import.meta.env.VITE_API_URL ? [] : [{ to: '/admin/notifications', icon: 'bell', label: 'การแจ้งเตือน' }]),
 ];
 
 const navClass = ({ isActive }) =>

@@ -7,6 +7,7 @@ const API_PORT = Number(process.env.API_PORT || 4301);
 
 export default defineConfig({
   plugins: [react(), tailwindcss()],
+  define: { global: 'globalThis' },
   server: {
     port: WEB_PORT,
     strictPort: true,

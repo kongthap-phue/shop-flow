@@ -6,7 +6,7 @@ export async function api(path, { method = 'GET', body } = {}) {
   const headers = {};
   if (body !== undefined) headers['Content-Type'] = 'application/json';
   const token = loadSession()?.token;
-  if (token) headers.Authorization = `Bearer ${token}`;
+  if (token) headers.Authorization = token;
 
   const res = await fetch(BASE + path, {
     method,

@@ -4,10 +4,10 @@ import { HttpError, json, parseBody, route } from '../lib/http.js';
 import { requireAdmin } from '../lib/auth.js';
 import { publicUrl, thumbKeyFor } from '../lib/storage.js';
 
-export const withUrls = (p) => ({
+export const withUrls = async (p) => ({
   ...p,
-  imageUrl: publicUrl(p.imageKey),
-  thumbUrl: p.imageKey ? publicUrl(thumbKeyFor(p.imageKey)) : null,
+  imageUrl: await publicUrl(p.imageKey),
+  thumbUrl: p.imageKey ? await publicUrl(thumbKeyFor(p.imageKey)) : null,
 });
 
 function validate(input) {
@@ -36,13 +36,13 @@ export const list = route(async (event) => {
     items = items.filter((p) => `${p.name} ${p.description}`.toLowerCase().includes(keyword));
   }
   items.sort((a, b) => b.createdAt.localeCompare(a.createdAt));
-  return json(200, items.map(withUrls));
+  return json(200, await Promise.all(items.map(withUrls)));
 });
 
 export const get = route(async (event) => {
   const product = await db.getProduct(event.pathParameters.id);
   if (!product) throw new HttpError(404, 'ไม่พบสินค้านี้');
-  return json(200, withUrls(product));
+  return json(200, await withUrls(product));
 });
 
 export const create = route(async (event) => {
@@ -50,7 +50,7 @@ export const create = route(async (event) => {
   const now = new Date().toISOString();
   const product = { productId: randomUUID(), ...validate(parseBody(event)), createdAt: now, updatedAt: now };
   await db.putProduct(product);
-  return json(201, withUrls(product));
+  return json(201, await withUrls(product));
 });
 
 export const update = route(async (event) => {
@@ -59,7 +59,7 @@ export const update = route(async (event) => {
   if (!existing) throw new HttpError(404, 'ไม่พบสินค้านี้');
   const product = { ...existing, ...validate(parseBody(event)), updatedAt: new Date().toISOString() };
   await db.putProduct(product);
-  return json(200, withUrls(product));
+  return json(200, await withUrls(product));
 });
 
 export const remove = route(async (event) => {

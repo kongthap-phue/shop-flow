@@ -118,6 +118,20 @@ Any valid-looking expiry date and CVC work, for example `12/28` and `123`.
 
 On the same Wi-Fi, others can open `http://<your IP>:4300`. On macOS, find your IP with `ipconfig getifaddr en0`.
 
+## Deploy to AWS
+
+The shop is live on AWS: **https://main.d2yz42dazxw1qn.amplifyapp.com**
+
+The full step-by-step guide, with a screenshot for every service, is in **[docs/AWS-DEPLOYMENT.md](docs/AWS-DEPLOYMENT.md)**. It was written on an AWS Academy Learner Lab account (`us-east-1`, `LabRole`), so another group can follow it and get the same result.
+
+The three files you upload are built by scripts in `aws/`:
+
+```bash
+./aws/build-lambda.sh
+node aws/make-openapi.mjs us-east-1 <account-id> <user-pool-id> aws-build/shopflow-api.openapi.json
+./aws/build-web.sh <invoke-url> <user-pool-id> <app-client-id>
+```
+
 ## Architecture on AWS
 
 <p align="center">
@@ -131,13 +145,13 @@ When running locally, `backend/local/server.js` stands in for every AWS service.
 | Express turns requests into events | API Gateway |
 | Mock login in `auth-local.js` | Cognito |
 | JSON files in `backend/data` | DynamoDB |
-| `backend/uploads` folder | S3 + CloudFront |
+| `backend/uploads` folder | S3 (CloudFront on a normal account, signed S3 links on Learner Lab) |
 | Calls `onOrderCreated` after an order is created | DynamoDB Stream |
 | Notifications written to a file | SNS |
 | "Generate report" button in the back office | EventBridge (scheduled) |
 | Mock card charge | Stripe / Omise test mode |
 
-The files in `handlers/` and `events/` barely change. What gets rewritten is `lib/` and the web app's login (`frontend/src/auth.jsx`), which moves to Cognito.
+The same code runs in both places. `backend/src/lib` picks the AWS version of each adapter (`db-aws.js`, `storage-aws.js`, `notify-aws.js`) when the AWS environment variables are set, and the website switches to Cognito when it is built with `VITE_COGNITO_CLIENT_ID`.
 
 ## Project structure
 
@@ -156,7 +170,8 @@ shop-flow/
 │   └── src/
 │       ├── pages/            storefront, plus pages/admin for the back office
 │       └── components/
-└── docs/                     images used in the README
+├── aws/                      build scripts and API definition for AWS
+└── docs/                     AWS guide and images used in the README
 ```
 
 ## API

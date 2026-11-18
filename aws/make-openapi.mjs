@@ -1,12 +1,12 @@
 import { writeFileSync } from 'node:fs';
 
-const [region, accountId, userPoolId, out] = process.argv.slice(2);
+const [region, accountId, userPoolId, out, functionName = 'shopflow-api'] = process.argv.slice(2);
 if (!out) {
-  console.error('usage: node aws/make-openapi.mjs <region> <account-id> <user-pool-id> <output.json>');
+  console.error('usage: node aws/make-openapi.mjs <region> <account-id> <user-pool-id> <output.json> [function-name]');
   process.exit(1);
 }
 
-const lambdaUri = `arn:aws:apigateway:${region}:lambda:path/2015-03-31/functions/arn:aws:lambda:${region}:${accountId}:function:shopflow-api/invocations`;
+const lambdaUri = `arn:aws:apigateway:${region}:lambda:path/2015-03-31/functions/arn:aws:lambda:${region}:${accountId}:function:${functionName}/invocations`;
 const cors = {
   'Access-Control-Allow-Origin': "'*'",
   'Access-Control-Allow-Headers': "'Content-Type,Authorization'",
@@ -42,7 +42,7 @@ const idParam = [{ name: 'id', in: 'path', required: true, schema: { type: 'stri
 
 const spec = {
   openapi: '3.0.1',
-  info: { title: 'shopflow-api', version: '1.0' },
+  info: { title: functionName, version: '1.0' },
   paths: {
     '/products': { get: lambda(false), post: lambda(true), options },
     '/products/{id}': { parameters: idParam, get: lambda(false), put: lambda(true), delete: lambda(true), options },
